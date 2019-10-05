@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
-import socket
-import re
-import platform    # For getting the operating system name
-import subprocess  # For executing a shell command
+import socket		# For socket connection
+import re			# For regex parsing
+import platform		# For getting the operating system name
+import subprocess	# For executing a shell command
 
 def send_msg(my_socket, msg, host, agent_port = 9002):
 	my_socket.settimeout(20)
 	my_socket.sendto(msg, (host, agent_port))
-	print ('\nQuadro enviado, aguardando resposta ...')
+	print ('\nMessage sent, waiting response ...')
 
 	while True:
 		try:
 			rxbuf = my_socket.recv(2000)
-			print ('[Success] Resposta Recebida!\n')
+			print ('[Success]Message Received!\n')
 			show_response_msg(rxbuf)
 		except socket.timeout:
 			print ('Timeout!!')
@@ -26,9 +26,9 @@ def show_response_msg(result):
 	pattern_05_00 = re.compile('(?=)(\\x05\\x00)')
 
 	if pattern_05_00.findall(result) :
-		print ("Finaliza em x05x00, Sem mensagem!")
+		print ("Response Ends with x05x00, No message!")
 	elif ( pattern.findall(result) == [] ) or (pattern.findall(result) == ""):
-		print ("[Error]Mensagem vazia/OID incompatível\n")
+		print ("[Error]Empty message/OID unreachable\n")
 	else:
 		response_msg = pattern.findall(result)
 		print (response_msg)
@@ -36,7 +36,7 @@ def show_response_msg(result):
 def ping(host):
     """
     Returns True if host (str) responds to a ping request.
-    Remember that a host may not respond to a ping (ICMP) request even if the host name is valid.
+    A host may not respond to a ping (ICMP) request even if the hostname is valid.
     """
     # Option for the number of packets as a function of
     param = '-n' if platform.system().lower()=='windows' else '-c'
@@ -48,25 +48,24 @@ def ping(host):
 if __name__ == '__main__':
 	can_ping = False
 	while can_ping!=True :
-		agent_IP = raw_input('IP do agente alvo: ')
-		print("\n\t[Testando conexão com agente]\n\n")
+		agent_IP = raw_input('Agent target IP: ')
+		print("\n\t[Testing connection with agent]\n\n")
 		can_ping = ping(agent_IP)
-	print("\n\t[Conexão saudável]\n")
-	agent_port = int(raw_input('\nPorta do alvo (161 ou 9002[android]): '))
+	print("\n\t[Stable connection]\n")
+	agent_port = int(raw_input('\nTarget Port (161 ou 9002[android]): '))
 
 	again = 'y'
 
-	Comm = raw_input('Community desejada (default = public): ')
+	Comm = raw_input('Community (default = public): ')
 	if not Comm:
 		Comm = 'public'
 	lenComm = len(Comm)
 
-	#prepara socket e conecta a interface - sem o 3o. argumento (protocol)
-	#nao ha filtragem do tipo de protocolo na recepcao
+	#makes the socket ready and connects the interface
 	my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 	while again == 'y':
-		OID = raw_input('OID desejado: ')
+		OID = raw_input('OID: ')
 		OID = OID.replace(".", "")
 		OID = OID[2:]
 		oid = chr(0x2b)
@@ -77,7 +76,7 @@ if __name__ == '__main__':
 				oif = oid + i
 		lenOID = len(oid)
 
-		#Monta mensagem SNMP de trás para frente
+		#Mounts SNMP message starting from the end
 		#Value Field
 		SVal = chr(0x05) + chr(0x00)
 
@@ -93,7 +92,7 @@ if __name__ == '__main__':
 		TypeVarbindList = chr(0x30) # tipo varbind list
 		SVarbindList = TypeVarbindList + chr(len(SVarbind)) + SVarbind
 
-		#campos Request ID, Error, ErrorIndex
+		#Request ID, Error, ErrorIndex fields
 		RqID = chr(2) + chr(1) + chr(1)
 		Err = chr(2) + chr(1) + chr(0)
 		ErrIndex = chr(2) + chr(1) + chr(0)
@@ -102,25 +101,27 @@ if __name__ == '__main__':
 
 		#Community
 		SComm = chr(4) + chr(lenComm) + Comm
-		#Versao
+		#Version
 		SVersao = chr(2) + chr(1) + chr(0)
 
 		#SNMP MESSAGE
 		MsgType = chr(0x30)
 		SSnmp = MsgType + chr(3 + 2 + lenComm + len(SPDU)) + SVersao + SComm + SPDU
-		#Envia a mensagem via socket
+		#Send the message via socket
 		send_msg(my_socket, SSnmp, agent_IP, agent_port)
 
-		again = raw_input('\nEnviar outro quadro? (y/n): ')
+		again = raw_input('\nSend again? (y/n): ')
 
 	my_socket.close()
 
-	print ('Fim da Operacao. Socket fechado.\n ----- END ----- \n')
+	print ('End of operation. Socket closed.\n ----- END ----- \n')
 
-
+'''
 # http://www.net-snmp.org/docs/mibs/
 # http://oid-info.com/get/1.3.6.1.2.1.2.2.1.1
-'''
+
+OIDs:
+
 interface
 .1.3.6.1.2.1.2.1.0 = INTEGER: 3
 .1.3.6.1.2.1.2.2.1.1.1 = INTEGER: 1
