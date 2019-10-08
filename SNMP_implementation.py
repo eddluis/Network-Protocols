@@ -56,10 +56,10 @@ if __name__ == '__main__':
 
 	again = 'y'
 
-	Comm = raw_input('Community (default = public): ')
-	if not Comm:
-		Comm = 'public'
-	lenComm = len(Comm)
+	comm = raw_input('Community (default = public): ')
+	if not comm:
+		comm = 'public'
+	len_comm = len(comm)
 
 	#makes the socket ready and connects the interface
 	my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -74,41 +74,41 @@ if __name__ == '__main__':
 				oid = oid + chr(int(i))
 			else:
 				oif = oid + i
-		lenOID = len(oid)
+		len_oid = len(oid)
 
 		#Mounts SNMP message starting from the end
 		#Value Field
-		SVal = chr(0x05) + chr(0x00)
+		s_val = chr(0x05) + chr(0x00)
 
-		#Objeto Field
-		TypeOid = chr(0x06)
-		SOid = TypeOid + chr(lenOID) + oid
+		#Object Field
+		type_oid = chr(0x06)
+		s_oid = type_oid + chr(len_oid) + oid
 
 		#Sequence / Varbind Type Field
-		TypeVarbind = chr(0x30) # tipo varbind
-		SVarbind = TypeVarbind + chr(lenOID + 2 + 2) + SOid + SVal
+		TypeVarbind = chr(0x30) # varbind
+		s_var_bind = TypeVarbind + chr(len_oid + 2 + 2) + s_oid + s_val
 
 		#Sequence / Varbind List Field
-		TypeVarbindList = chr(0x30) # tipo varbind list
-		SVarbindList = TypeVarbindList + chr(len(SVarbind)) + SVarbind
+		type_var_bind_list = chr(0x30) # varbind list
+		s_var_bind_list = type_var_bind_list + chr(len(s_var_bind)) + s_var_bind
 
 		#Request ID, Error, ErrorIndex fields
-		RqID = chr(2) + chr(1) + chr(1)
-		Err = chr(2) + chr(1) + chr(0)
-		ErrIndex = chr(2) + chr(1) + chr(0)
+		rq_ID = chr(2) + chr(1) + chr(1)
+		err_ = chr(2) + chr(1) + chr(0)
+		err_index = chr(2) + chr(1) + chr(0)
 
-		SPDU = chr(0xa0) + chr(3 + 3 + 3 + len(SVarbindList)) + RqID + Err + ErrIndex + SVarbindList
+		SPDU = chr(0xa0) + chr(3 + 3 + 3 + len(s_var_bind_list)) + rq_ID + err_ + err_index + s_var_bind_list
 
 		#Community
-		SComm = chr(4) + chr(lenComm) + Comm
+		s_comm = chr(4) + chr(len_comm) + comm
 		#Version
-		SVersao = chr(2) + chr(1) + chr(0)
+		s_version = chr(2) + chr(1) + chr(0)
 
 		#SNMP MESSAGE
-		MsgType = chr(0x30)
-		SSnmp = MsgType + chr(3 + 2 + lenComm + len(SPDU)) + SVersao + SComm + SPDU
+		msg_type = chr(0x30)
+		s_snmp = msg_type + chr(3 + 2 + len_comm + len(SPDU)) + s_version + s_comm + SPDU
 		#Send the message via socket
-		send_msg(my_socket, SSnmp, agent_IP, agent_port)
+		send_msg(my_socket, s_snmp, agent_IP, agent_port)
 
 		again = raw_input('\nSend again? (y/n): ')
 
