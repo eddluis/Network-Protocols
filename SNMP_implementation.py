@@ -120,31 +120,3 @@ if __name__ == '__main__':
 # http://www.net-snmp.org/docs/mibs/
 # http://oid-info.com/get/1.3.6.1.2.1.2.2.1.1
 
-OIDs:
-
-interface
-.1.3.6.1.2.1.2.1.0 = INTEGER: 3
-.1.3.6.1.2.1.2.2.1.1.1 = INTEGER: 1
-.1.3.6.1.2.1.2.2.1.1.2 = INTEGER: 2
-.1.3.6.1.2.1.2.2.1.1.3 = INTEGER: 3
-.1.3.6.1.2.1.2.2.1.2.1 = STRING: lo
-.1.3.6.1.2.1.2.2.1.2.2 = STRING: Realtek Semiconductor Co., Ltd. RTL8101/2/6E PCI Express Fast/Gigabit Ethernet controller
-.1.3.6.1.2.1.2.2.1.2.3 = STRING: Qualcomm Atheros QCA9565 / AR9565 Wireless Network Adapter
-.1.3.6.1.2.1.2.2.1.3.1 = INTEGER: softwareLoopback(24)
-.1.3.6.1.2.1.2.2.1.3.2 = INTEGER: ethernetCsmacd(6)
-.1.3.6.1.2.1.2.2.1.3.3 = INTEGER: ethernetCsmacd(6)
-.1.3.6.1.2.1.2.2.1.4.1 = INTEGER: 65536
-.1.3.6.1.2.1.2.2.1.4.2 = INTEGER: 1500
-.1.3.6.1.2.1.2.2.1.4.3 = INTEGER: 1500
-.1.3.6.1.2.1.2.2.1.5.1 = Gauge32: 10000000
-.1.3.6.1.2.1.2.2.1.5.2 = Gauge32: 10000000
-'''
-'''
-system
-.1.3.6.1.2.1.1.1.0 = STRING: Linux edison-Inspiron-3442 4.4.0-47-generic #68-Ubuntu SMP Wed Oct 26 19:39:52 UTC 2016 x86_64
-.1.3.6.1.2.1.1.2.0 = OID: .1.3.6.1.4.1.8072.3.2.10
-.1.3.6.1.2.1.1.3.0 = Timeticks: (701525) 1:56:55.25
-.1.3.6.1.2.1.1.4.0 = STRING: Me <me@example.org>
-.1.3.6.1.2.1.1.5.0 = STRING: edison@edison-Aspire-5741
-.1.3.6.1.2.1.1.6.0 = STRING: Sitting on the Dock of the Bay
-'''
